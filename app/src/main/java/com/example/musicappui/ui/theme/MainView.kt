@@ -2,6 +2,7 @@ package com.example.musicappui.ui.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,9 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.musicappui.MainViewModel
 import com.example.musicappui.Screen
 import com.example.musicappui.screensInDrawer
 import kotlinx.coroutines.CoroutineScope
@@ -43,13 +49,23 @@ fun MainView() {
 
     val scope: CoroutineScope = rememberCoroutineScope()
 
+    val viewModel: MainViewModel = viewModel()
+
     // 어떤 화면에 있는지 알기
     val controller: NavController = rememberNavController()
     val navBackStackEntry by controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val dialogOpen = remember {
+        mutableStateOf(false)
+    }
+
+    val currentScreen = remember{
+        viewModel.currentScreen.value
+    }
+
     val title = remember{
-        mutableStateOf("")
+        mutableStateOf(currentScreen.title)
     }
 
     Scaffold(
@@ -75,7 +91,7 @@ fun MainView() {
                             scaffoldState.drawerState.close()
                         }
                         if(item.dRoute == "add_account") {
-
+                            dialogOpen.value = true
                         } else {
                             controller.navigate(item.dRoute)
                             title.value = item.dTitle
@@ -85,8 +101,9 @@ fun MainView() {
             }
         }
     ) {
+        Navigation(navController = controller, viewModel = viewModel, pd = it)
 
-        Text("Text", modifier = Modifier.padding(it))
+        AccountDialog(dialogOpen = dialogOpen)
     }
 }
 
@@ -115,3 +132,16 @@ fun DrawerItem(
     }
 }
 
+@Composable
+fun Navigation(navController: NavController, viewModel: MainViewModel, pd: PaddingValues) {
+    NavHost(navController = navController as NavHostController,
+        startDestination = Screen.DrawerScreen.AddAccount.route, modifier = Modifier.padding(pd)) {
+        composable(Screen.DrawerScreen.AddAccount.route) {
+
+        }
+        composable(Screen.DrawerScreen.Subscription.route) {
+
+        }
+
+    }
+}
