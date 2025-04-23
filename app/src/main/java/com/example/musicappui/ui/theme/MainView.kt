@@ -70,7 +70,7 @@ fun MainView() {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = {Text("Home")},
+            TopAppBar(title = {Text(title.value)},
                 navigationIcon = {
                     IconButton(onClick = {
                         // 드로어 열기
@@ -135,9 +135,9 @@ fun DrawerItem(
 @Composable
 fun Navigation(navController: NavController, viewModel: MainViewModel, pd: PaddingValues) {
     NavHost(navController = navController as NavHostController,
-        startDestination = Screen.DrawerScreen.AddAccount.route, modifier = Modifier.padding(pd)) {
-        composable(Screen.DrawerScreen.AddAccount.route) {
-
+        startDestination = Screen.DrawerScreen.Account.route, modifier = Modifier.padding(pd)) {
+        composable(Screen.DrawerScreen.Account.route) {
+            AccountView()
         }
         composable(Screen.DrawerScreen.Subscription.route) {
 
